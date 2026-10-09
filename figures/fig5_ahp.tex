@@ -1,0 +1,60 @@
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+  \begin{groupplot}[
+      group style={group size=3 by 1, horizontal sep=11mm},
+      paper axis, width=3.2cm, height=3.4cm]
+  \nextgroupplot[ymode=log, xlabel={iteration $k$},
+                 ylabel={$\|\bm r(k)-\bm r_\infty\|$},
+                 xmin=0, xmax=400, ymin=1e-8, ymax=1e3,
+                 xtick={0,200,400}, ytick={1e-6,1e-3,1e0,1e3},
+                 legend style={at={(0.03,0.03)}, anchor=south west},
+                 title={(a) distributed SLLS}]
+    \addplot[cblue, no marks] table[x=k, y=err, col sep=comma]
+        {\dataroot/slls_convergence.csv};
+    \addlegendentry{error}
+    \addplot[cred, dashed, no marks] table[x=k, y=bound, col sep=comma]
+        {\dataroot/slls_convergence.csv};
+    \addlegendentry{bound}
+  \nextgroupplot[xlabel={alternatives, sorted}, ylabel={utility},
+                 xmin=0, xmax=41, ymin=0, ymax=0.105,
+                 xtick={0,10,20,30,40},
+                 ytick={0,0.03,0.06,0.09},
+                 yticklabel style={/pgf/number format/.cd, fixed,
+                                   precision=2, zerofill},
+                 legend style={at={(0.97,0.97)}, anchor=north east},
+                 title={(b) recovery, $\sigma=0.3$}]
+    \addplot[cblue, mark=*, mark size=0.8pt] table[x=rank, y=w_true, col sep=comma]
+        {\dataroot/slls_utilities.csv};
+    \addlegendentry{true}
+    \addplot[corange, only marks, mark=square, mark size=1.1pt]
+        table[x=rank, y=w_hat, col sep=comma] {\dataroot/slls_utilities.csv};
+    \addlegendentry{SLLS}
+  \nextgroupplot[xlabel={perturbation level $\sigma$},
+                 ylabel={Kendall $\tau$},
+                 xmin=0, xmax=1, ymin=0.35, ymax=1.05,
+                 xtick={0,0.5,1}, ytick={0.4,0.6,0.8,1.0},
+                 title={(c) ranking accuracy}]
+    \addplot[name path=hi, draw=none, forget plot]
+        table[x=sigma, y expr={min(\thisrow{tau}+\thisrow{std},1)}, col sep=comma]
+        {\dataroot/slls_tau.csv};
+    \addplot[name path=lo, draw=none, forget plot]
+        table[x=sigma, y expr={\thisrow{tau}-\thisrow{std}}, col sep=comma]
+        {\dataroot/slls_tau.csv};
+    \addplot[cblue, opacity=0.15, forget plot] fill between[of=lo and hi];
+    \addplot[cblue, mark=*, mark size=1.0pt]
+        table[x=sigma, y=tau, col sep=comma] {\dataroot/slls_tau.csv};
+  \end{groupplot}
+\end{tikzpicture}
+\caption{Sparse AHP on the small-world elicitation graph of
+Figure~\ref{fig:examples}(d), solved by the Sparse Logarithmic Least Squares
+method. (a)~the distributed iteration
+converges linearly, at the rate $\rho(\theta)$
+predicted by the consensus analysis of Section~\ref{sec:consensus}; the error
+curve falls
+below the displayed range. (b)~estimated versus true utilities for a single
+instance; (c)~Kendall's $\tau$ between the true and the estimated ranking,
+averaged over $300$ runs per value of $\sigma$ (shaded: one standard
+deviation). At $\sigma=0$ the recovery is exact.}
+\label{fig:ahp}
+\end{figure}

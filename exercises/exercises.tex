@@ -1,0 +1,199 @@
+% ---------------------------------------------------------------------------
+% Exercises for "The Graph Laplacian at Work" (problems only).
+% Solutions are available to instructors from the author.
+% ---------------------------------------------------------------------------
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.4cm]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage[shortlabels]{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks,linkcolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Ker}{\operatorname{ker}}
+\newcommand{\Span}{\operatorname{span}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\Ncut}{\mathrm{Ncut}}
+\newcommand{\cut}{\mathrm{cut}}
+\newcommand{\vol}{\mathrm{vol}}
+
+\newcounter{ex}
+\newenvironment{exercise}[2]{\refstepcounter{ex}\par\bigskip\noindent
+  \textbf{Exercise \theex\ \,(#1).}\ \emph{#2}\par\smallskip}{\par}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{3pt}
+
+\begin{document}
+
+\begin{center}
+{\Large\bfseries The Graph Laplacian at Work --- Exercises}\\[4pt]
+Companion to G.~Oliva, \emph{The Graph Laplacian at Work: One Least-Squares
+Problem Behind Consensus, Graph Drawing, Clustering and Decision Making}
+\end{center}
+
+\noindent Section numbers refer to the paper. Exercises marked
+\textsf{[code]} use the notebooks in \texttt{notebooks/} and the functions in
+\texttt{code/}. Unless stated otherwise,
+graphs are undirected and connected, $L=BWB^\top$, and eigenvalues are
+ordered increasingly.
+
+% ===========================================================================
+\begin{exercise}{Section 2}{Orientation does not matter, but the data must follow it}
+\begin{enumerate}[(a)]
+\item Show that reversing the orientation of edge $h$ multiplies the $h$-th
+column of $B$ by $-1$ and leaves $L$ unchanged.
+\item In Example 2.4, orient the third edge as $e_3=(v_1,v_3)$ instead of
+$(v_3,v_1)$. Write the new $B$, and the edge vectors that describe the
+\emph{same measurements} as $\bm b=(1,1,-2,5)^\top$ and $\bm b=(1,1,1,5)^\top$.
+\item Which vector now spans $\Ker(B)$? Check that the consistency test of
+Theorem 2.3(iii) gives the same verdicts as before.
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Sections 2.3 and 2.5}{Four families, and a graph on which
+$\theta=1/\max_i d_i$ fails}
+Consider the path $P_n$, the cycle $C_n$, the star $S_n$ (one centre and $n-1$
+leaves) and the complete graph $K_n$, all unweighted.
+\begin{enumerate}[(a)]
+\item Find $\lambda_2(L)$ and $\lambda_n(L)$ for each family. (For $C_n$, try
+$x_k=\mathrm e^{2\pi\mathrm i jk/n}$; for $P_n$, $x_k=\cos\big(\pi j(k-\tfrac12)/n\big)$.)
+\item Compute the rate $\rho(\theta)$ of the discrete consensus iteration with
+$\theta=1/\max_i d_i$, and evaluate it for $n=10$.
+\item For which family is the boundary value $\theta=1/\max_i d_i$ \emph{not}
+admissible (Remark 2.6)? Describe what the iteration does from the
+alternating initial condition $x_k(0)=(-1)^k$.
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Section 3.3}{The best constant step}
+\begin{enumerate}[(a)]
+\item Show that $\rho(\theta)=\max\{|1-\theta\lambda_2|,|1-\theta\lambda_n|\}$ is
+minimized by $\theta^\star=2/(\lambda_2+\lambda_n)$, and that
+$\rho(\theta^\star)=(\kappa-1)/(\kappa+1)$ with $\kappa=\lambda_n/\lambda_2$.
+\item \textsf{[code]} On the sensor network of Section 3, compare the number of
+iterations needed to reduce the error by $10^3$ with $\theta=1/\max_i d_i$ and
+with $\theta^\star$.
+\item Why can the agents not simply use $\theta^\star$? Suggest two ways out.
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Section 4.2}{Tutte's layout is a random walk}
+Let $\mathcal A\neq\emptyset$ be the anchors and $\mathcal F$ the free nodes of
+a connected graph, and let $H=-L_{\mathcal{FF}}^{-1}L_{\mathcal{FA}}$, so that
+Tutte's layout is $P_{\mathcal F}=HP_{\mathcal A}$.
+\begin{enumerate}[(a)]
+\item Show that $H$ is entrywise nonnegative and that its rows sum to one.
+(Hint: write $L_{\mathcal{FF}}=D_{\mathcal F}(I-D_{\mathcal F}^{-1}A_{\mathcal{FF}})$ and
+use a Neumann series; for the row sums, use $L\bm 1_n=\bm 0_n$.)
+\item Deduce that every free node is drawn inside the convex hull of the
+anchors.
+\item Consider the random walk that moves from $v_i$ to a neighbour $v_j$ with
+probability $w_{ij}/d_i$. Show that $H_{ia}$ is the probability that the walk
+started at $v_i$ reaches the anchor set for the first time at $v_a$.
+\item \textsf{[code]} Check (c) by simulation on the Delaunay example.
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Sections 4.2 and 4.4}{How many leaders?}
+\begin{enumerate}[(a)]
+\item Use Cauchy's interlacing theorem to show that with $k$ anchors
+$\lambda_{\min}(L_{\mathcal{FF}})\le\lambda_{k+1}(L)$; in particular a single
+leader can only slow the network down.
+\item \textsf{[code]} On the Delaunay example, anchor the first $k$ vertices of
+the convex hull (in the order returned by the code). How many are needed for
+the anchored consensus to beat the free one, i.e.\ for
+$\lambda_{\min}(L_{\mathcal{FF}})>\lambda_2(L)$?
+\item \textsf{[code]} Choose the anchors greedily, one at a time, among
+\emph{all} nodes. How many are needed now? Comment on the difference between a
+good anchor set for drawing and a good anchor set for speed.
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Section 5.2}{Normalized cuts of haemoglobin}
+\begin{enumerate}[(a)]
+\item \textsf{[code]} For the \emph{dimer} partition $A=\{\alpha_1,\beta_1\}$
+(chains A, B) versus $\bar A=\{\alpha_2,\beta_2\}$ (chains C, D), build the
+two-valued vector $\bm x$ of Section 5.2 and verify the three identities
+$\bm x^\top D\bm 1=0$, $\bm x^\top D\bm x=\vol(V)$,
+$\bm x^\top L\bm x/\bm x^\top D\bm x=\Ncut(A,\bar A)$.
+\item \textsf{[code]} Compute the normalized cut of the dimer partition, of the
+$\alpha$/$\beta$ partition (A, C versus B, D) and of the partition obtained by
+thresholding the second eigenvector of $L\bm q=\mu D\bm q$ at zero. Which is
+the smallest?
+\item Check Cheeger's inequality on these numbers. What does (b) say about the
+quality of the spectral relaxation?
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Sections 5.3 and 5.4}{When does the eigengap work?}
+\textsf{[code]} Rebuild the haemoglobin contact network with the upper cut-off
+$6, 6.5, \dots, 10$~\AA\ (the function \texttt{contact\_network} in
+\texttt{notebooks/03\_clustering.ipynb}).
+\begin{enumerate}[(a)]
+\item For which cut-offs does the graph have isolated residues? What does that
+do to $L_{\mathrm{norm}}$ and to Theorem 2.2(ii)?
+\item For the others, record $k^\star$ and the relative margin between the
+largest and the second largest gap.
+\item Fix $k=4$ and record the agreement with the chains. Which is more robust,
+the choice of $k$ or the partition for a given $k$?
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Section 6}{Several decision makers: $W\neq I$}
+Pair $h=(v_i,v_j)$ is judged by $m_h$ experts; expert $e$ reports
+$\ln S^{(e)}_{ij}=r_i-r_j+\eta^{(e)}_h$, with independent
+$\eta^{(e)}_h\sim\mathcal N(0,\sigma^2)$, and $b_h$ is the mean of the $m_h$
+log-judgements.
+\begin{enumerate}[(a)]
+\item Show that the maximum-likelihood estimator of $\bm r$ is
+Problem 1 with $W=\diag(m_1,\dots,m_m)$.
+\item Write the distributed iteration that agent $i$ runs, and an admissible
+step size.
+\item \textsf{[code]} On the small world of Section 6, with $m_h$ uniform in
+$\{1,\dots,5\}$ and $\sigma=1$, compare $W=I$ and $W=\diag(m_h)$.
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Sections 6 and 7.4}{Variance is effective resistance}
+Let $W=I$, $\bm b=B^\top\bm r+\bm\eta$ with $\bm\eta\sim\mathcal N(\bm 0,\sigma^2I_m)$
+and $\bm 1^\top\bm r=0$, and let $\hat{\bm r}=L^\dagger B\bm b$.
+\begin{enumerate}[(a)]
+\item Show that $\hat{\bm r}$ is unbiased and that
+$\operatorname{Cov}(\hat{\bm r})=\sigma^2L^\dagger$. Deduce
+$\operatorname{Var}(\hat r_i-\hat r_j)=\sigma^2R_{ij}$, where
+$R_{ij}=(\bm e_i-\bm e_j)^\top L^\dagger(\bm e_i-\bm e_j)$ is the effective
+resistance between $v_i$ and $v_j$ when every edge is a unit resistor.
+\item Show that $R_{ij}\le1$ for adjacent nodes, with equality if and only if
+the edge is a bridge. Interpret: when is the least-squares estimate of
+$r_i-r_j$ better than the direct judgement $b_{ij}$?
+\item \textsf{[code]} On the small world of Section 6, find the range of $R_{ij}$
+over the edges, the worst-estimated pair, and verify (a) by Monte Carlo.
+\end{enumerate}
+\end{exercise}
+
+% ===========================================================================
+\begin{exercise}{Section 3.4}{Directed consensus}
+Take the digraph with arcs $v_1\to v_2$, $v_2\to v_3$, $v_3\to v_4$,
+$v_4\to v_1$, $v_1\to v_3$, with the convention $A_{ij}=1$ for the arc
+$v_i\to v_j$ and the dynamics $\dot x_i=\sum_jA_{ij}(x_j-x_i)$.
+\begin{enumerate}[(a)]
+\item Write $L$, check that $L\bm 1=\bm 0$, and decide whether the graph is
+balanced.
+\item Compute the left null vector $\bm\gamma$ with $\bm\gamma^\top\bm 1=1$ and the
+limit from $\bm x(0)=\bm e_1$. Is it the average?
+\item Compute the spectrum of $L$. What sets the rate of convergence now?
+\item Add one arc so that the graph becomes balanced, and check that the limit
+becomes the average.
+\end{enumerate}
+\end{exercise}
+
+\end{document}

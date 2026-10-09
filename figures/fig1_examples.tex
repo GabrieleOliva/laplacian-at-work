@@ -1,0 +1,35 @@
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+  \begin{groupplot}[
+      group style={group size=4 by 1, horizontal sep=3mm},
+      graph axis, width=3.15cm, height=3.15cm]
+  \nextgroupplot[title={(a) sensor network}]
+    \addplot[edges] table[x=x, y=y, col sep=comma] {\dataroot/ex_consensus_edges.csv};
+    \addplot[nodes, mark size=1.0pt] table[x=x, y=y, col sep=comma]
+        {\dataroot/ex_consensus_nodes.csv};
+  \nextgroupplot[title={(b) Delaunay mesh}]
+    \addplot[edges] table[x=x, y=y, col sep=comma] {\dataroot/ex_drawing_edges.csv};
+    \addplot[nodes, mark size=1.0pt] table[x=x, y=y, col sep=comma]
+        {\dataroot/ex_drawing_nodes.csv};
+  \nextgroupplot[title={(c) haemoglobin}]
+    \addplot[cluster marks tiny] table[x=x, y=y, meta=chain,
+        col sep=comma] {\dataroot/ex_clustering_nodes.csv};
+  \nextgroupplot[title={(d) small world}]
+    \addplot[edges] table[x=x, y=y, col sep=comma] {\dataroot/ex_ahp_edges.csv};
+    \addplot[nodes, mark size=1.0pt] table[x=x, y=y, col sep=comma]
+        {\dataroot/ex_ahp_nodes.csv};
+  \end{groupplot}
+\end{tikzpicture}
+\caption{The four examples, one per application. (a)~a random geometric graph
+standing for a wireless sensor network (Section~\ref{sec:consensus});
+(b)~a Delaunay triangulation, planar and $3$-connected
+(Section~\ref{sec:drawing});
+(c)~the $\mathrm{C}_\alpha$ contact network of human deoxyhaemoglobin, drawn
+here at the residue positions projected on their two principal axes and
+coloured by chain (Section~\ref{sec:clustering}); (d)~a Watts--Strogatz small
+world, standing for a sparse pattern of pairwise judgements
+(Section~\ref{sec:ahp}). Their spectral data are collected in
+Table~\ref{tab:examples}.}
+\label{fig:examples}
+\end{figure}

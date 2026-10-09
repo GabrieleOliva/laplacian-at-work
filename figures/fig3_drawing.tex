@@ -1,0 +1,37 @@
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+  \begin{groupplot}[
+      group style={group size=4 by 1, horizontal sep=3mm},
+      graph axis, width=3.15cm, height=3.15cm]
+  \nextgroupplot[title={(a) true positions}]
+    \addplot[edges] table[x=x, y=y, col sep=comma] {\dataroot/layout_true_edges.csv};
+    \addplot[nodes, mark size=1.0pt] table[x=x, y=y, col sep=comma]
+        {\dataroot/layout_true_nodes.csv};
+  \nextgroupplot[title={(b) Hall}]
+    \addplot[edges] table[x=x, y=y, col sep=comma] {\dataroot/layout_hall_edges.csv};
+    \addplot[nodes, mark size=1.0pt] table[x=x, y=y, col sep=comma]
+        {\dataroot/layout_hall_nodes.csv};
+  \nextgroupplot[title={(c) degree-normalized}]
+    \addplot[edges] table[x=x, y=y, col sep=comma] {\dataroot/layout_koren_edges.csv};
+    \addplot[nodes, mark size=1.0pt] table[x=x, y=y, col sep=comma]
+        {\dataroot/layout_koren_nodes.csv};
+  \nextgroupplot[title={(d) anchored (Tutte)}]
+    \addplot[edges] table[x=x, y=y, col sep=comma] {\dataroot/layout_tutte_edges.csv};
+    \addplot[nodes, mark size=1.0pt] table[x=x, y=y, col sep=comma]
+        {\dataroot/layout_tutte_nodes.csv};
+    \addplot[anchornodes, mark size=1.5pt] table[x=x, y=y, col sep=comma,
+        discard if not={anchor}{1}] {\dataroot/layout_tutte_nodes.csv};
+  \end{groupplot}
+\end{tikzpicture}
+\caption{Four drawings of the Delaunay example of
+Figure~\ref{fig:examples}(b), the last three obtained by minimizing the same
+edge energy $\|B^\top P\|_F^2$ under different constraints. (a)~the positions
+the points actually had, which the algorithms never see; (b)~Hall's layout,
+$\bm p=[\bm q_2,\bm q_3]$, which has four edge crossings; (c)~its
+degree-normalized variant, from $L\bm q=\mu D\bm q$; (d)~the anchored (Tutte)
+embedding, with the ten convex-hull nodes pinned at their own positions
+(squares) and every other node at the barycentre of its neighbours; as
+Tutte's theorem guarantees, (d) is crossing-free.}
+\label{fig:drawing}
+\end{figure}

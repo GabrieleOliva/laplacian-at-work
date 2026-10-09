@@ -1,0 +1,85 @@
+% ---------------------------------------------------------------------------
+% Shared TikZ / pgfplots styles for all the figures of the paper.
+% Every figure reads its data from data/*.csv, produced by code/*.py .
+% ---------------------------------------------------------------------------
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{fillbetween}
+\usetikzlibrary{plotmarks,calc}
+
+% Okabe--Ito colour-blind-safe palette
+\definecolor{cblue}{HTML}{0072B2}
+\definecolor{corange}{HTML}{E69F00}
+\definecolor{cgreen}{HTML}{009E73}
+\definecolor{cred}{HTML}{D55E00}
+\definecolor{cpurple}{HTML}{CC79A7}
+\definecolor{cgrey}{HTML}{666666}
+\definecolor{cedge}{HTML}{BFBFBF}
+
+\pgfplotsset{
+  % ---- plain line/scatter axes
+  paper axis/.style={
+    width=5.1cm, height=4.0cm,
+    scale only axis,
+    axis line style={cgrey, line width=0.4pt},
+    tick style={cgrey, line width=0.4pt},
+    label style={font=\footnotesize},
+    tick label style={font=\scriptsize},
+    title style={font=\footnotesize, yshift=-1pt},
+    legend style={font=\scriptsize, draw=none, fill=none,
+                  inner sep=1pt, row sep=-1.5pt},
+    every axis plot/.append style={line width=0.7pt},
+    unbounded coords=jump,
+  },
+  % ---- axes used to draw a graph: no frame, equal units
+  graph axis/.style={
+    width=4.3cm, height=4.3cm,
+    scale only axis, hide axis,
+    xmin=-1.12, xmax=1.12, ymin=-1.12, ymax=1.12,
+    enlargelimits=false,
+    title style={font=\footnotesize, yshift=2pt},
+    unbounded coords=jump,
+  },
+  % ---- the edge set of a graph, drawn by a single \addplot
+  edges/.style={cedge, line width=0.35pt, no marks, forget plot},
+  % ---- the node set
+  nodes/.style={only marks, mark=*, mark size=1.3pt,
+                mark options={fill=white, draw=cblue, line width=0.5pt}},
+  anchornodes/.style={only marks, mark=square*, mark size=1.9pt,
+                mark options={fill=cred, draw=black, line width=0.3pt}},
+}
+
+% cluster classes, used with  scatter src=explicit symbolic
+\pgfplotsset{
+  cluster marks/.style={
+    scatter, only marks, scatter src=explicit symbolic,
+    scatter/classes={
+      0={mark=*,      mark size=1.5pt, draw=black, fill=cblue,   line width=0.25pt},
+      1={mark=square*,mark size=1.5pt, draw=black, fill=corange, line width=0.25pt},
+      2={mark=triangle*,mark size=1.9pt,draw=black,fill=cgreen,  line width=0.25pt},
+      3={mark=diamond*,mark size=1.8pt,draw=black, fill=cpurple, line width=0.25pt},
+      4={mark=pentagon*,mark size=1.7pt,draw=black,fill=cred,    line width=0.25pt}}},
+  % same encoding, sized for the 574-residue panels
+  cluster marks tiny/.style={
+    scatter, only marks, scatter src=explicit symbolic,
+    scatter/classes={
+      0={mark=*,        mark size=0.6pt, draw=cblue,   fill=cblue,   line width=0.1pt},
+      1={mark=square*,  mark size=0.6pt, draw=corange, fill=corange, line width=0.1pt},
+      2={mark=triangle*,mark size=0.8pt, draw=cgreen,  fill=cgreen,  line width=0.1pt},
+      3={mark=diamond*, mark size=0.8pt, draw=cpurple, fill=cpurple, line width=0.1pt}}},
+}
+
+% filter that keeps only the rows whose column #1 equals #2
+\pgfplotsset{
+  discard if not/.style 2 args={
+    x filter/.code={%
+      \edef\tempa{\thisrow{#1}}%
+      \edef\tempb{#2}%
+      \ifx\tempa\tempb\else\def\pgfmathresult{inf}\fi
+    }
+  }
+}
+
+% Path of the CSV files: data/ inside the repository; the manuscript, which
+% lives one level up, defines \dataroot before reading this file.
+\providecommand{\dataroot}{data}
