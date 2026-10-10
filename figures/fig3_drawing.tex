@@ -25,11 +25,10 @@
   \end{groupplot}
 \end{tikzpicture}
 \caption{Four drawings of the Delaunay example of
-Figure~\ref{fig:examples}(b), the last three obtained by minimizing the same
-edge energy $\|B^\top P\|_F^2$ under different constraints. (a)~the positions
-the points actually had, which the algorithms never see; (b)~Hall's layout,
-$\bm p=[\bm q_2,\bm q_3]$, which has four edge crossings; (c)~its
-degree-normalized variant, from $L\bm q=\mu D\bm q$; (d)~the anchored (Tutte)
+Figure~\ref{fig:examples}(b), the last three obtained by minimizing the same edge energy $\|B^\top P\|_{W,F}^2$ (here $W=I$) under different constraints. (a)~the positions
+the points actually had, of which only the ten hull positions are supplied to
+the anchored algorithm in (d); (b)~Hall's layout,
+$P=[\bm q_2,\bm q_3]$, which has four edge crossings; (c)~its degree-normalized variant, from $L\bm v=\mu D\bm v$, which has ten crossings (the axes of (b) and (c) are rescaled separately); (d)~the anchored (Tutte)
 embedding, with the ten convex-hull nodes pinned at their own positions
 (squares) and every other node at the barycentre of its neighbours; as
 Tutte's theorem guarantees, (d) is crossing-free.}

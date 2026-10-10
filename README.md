@@ -21,9 +21,9 @@ single least-squares problem
 minimize  || Bᵀ x − b ||²_W       over x ∈ Rⁿ,      normal equations  L x = B W b
 ```
 
-where `B` is the incidence matrix of the graph, the unknown `x` lives on the
-nodes, and the data `b` live on the edges. With an affine constraint (none, or
-anchored nodes) consensus, Tutte's drawing and sparse AHP share the whole
+where `B` is the incidence matrix of the graph, the unknown `x` is associated
+with the nodes, and the data `b` with the edges. With an affine constraint (none,
+or anchored nodes), consensus, Tutte's drawing and sparse AHP share the whole
 problem and the same distributed iteration; with a normalization, Hall's
 layout and spectral clustering share its quadratic form and become eigenvalue
 problems.
@@ -67,17 +67,18 @@ author.
 |---|---|---|---|---|---|
 | 3 · consensus | random geometric | 50 | 160 | 0.181 | the standard sensor-network model |
 | 4 · graph drawing | Delaunay triangulation | 30 | 77 | 0.651 | planar **and** 3-connected: Tutte's hypotheses hold |
-| 5 · clustering | haemoglobin contacts (PDB 2HHB) | 574 | 2251 | 0.098 | a tetramer, so the right answer is known in advance |
+| 5 · clustering | haemoglobin contacts (PDB 2HHB) | 574 | 2251 | 0.098 | an external four-chain reference partition is available |
 | 6 · sparse AHP | Watts–Strogatz small world | 40 | 80 | 0.522 | a sparse elicitation pattern |
 
 * On the **Delaunay** mesh the anchored (Tutte) embedding is provably
-  crossing-free, and the code checks that it is — while Hall's layout of the
+  crossing-free, and the code asserts that it is — while Hall's layout of the
   *same planar graph* has four crossings: minimizing an energy promises
   nothing about planarity.
-* On **haemoglobin** the eigengap heuristic returns k\* = 4 on its own, and the
-  resulting clusters agree with the four chains on 546 of 574 residues
-  (95.1 %). The algorithm is given a list of 2251 contacts and returns the
-  quaternary structure.
+* On **haemoglobin** the eigengap heuristic returns k\* = 4 within the
+  prespecified coarse-partition range 2 ≤ k ≤ 9 (with a narrow margin: see
+  Section 5.4 of the paper), and the resulting clusters agree with the four
+  chains on 546 of 574 residues (95.1 %). The algorithm is given a list of 2251
+  contacts and recovers the four-chain partition.
 
 ## What is in here
 
@@ -95,7 +96,8 @@ author.
 ├── assets/                  the haemoglobin contact network (derived from PDB 2HHB)
 ├── data/                    generated CSV files + results.json
 ├── figures/                 TikZ/pgfplots sources of the paper's figures
-│   └── pgfstyles.tex        shared styles and colour palette
+│   ├── pgfstyles.tex        shared styles and colour palette
+│   └── figures.tex          standalone driver: draws all five figures from data/
 ├── notebooks/               one notebook per section
 └── exercises/               exercises.tex and exercises.pdf
 ```
@@ -116,15 +118,20 @@ nothing here needs a network connection.
 
 ```bash
 make data        # regenerate data/*.csv and data/results.json
+make figures     # draw the five figures of the paper from data/ (needs LaTeX)
 make exercises   # rebuild exercises/exercises.pdf (needs LaTeX)
 make notebooks   # run every notebook headless, as a test (needs Jupyter)
 ```
 
 The only dependencies of `code/` are `numpy`, `scipy` and `networkx`
 (`requirements.txt`); the notebooks also need `matplotlib` and Jupyter
-(`requirements-notebooks.txt`).
+(`requirements-notebooks.txt`). The committed `data/` was generated and
+reproduced byte for byte with Python 3.14.2, NumPy 2.4.1, SciPy 1.18.0 and
+NetworkX 3.6.1; other BLAS/LAPACK builds may change the last digits of some
+floating-point values (about 1e-15 relative), never the figures.
 
 ## License
 
-Code released under the MIT license (see `LICENSE`). The structure 2HHB is
-from the RCSB Protein Data Bank.
+Code, notebooks, figure sources and exercises are released under the MIT
+license (see `LICENSE`). The structure 2HHB (Fermi, Perutz, Shaanan and Fourme,
+J. Mol. Biol. 175, 159-174, 1984) is from the RCSB Protein Data Bank.

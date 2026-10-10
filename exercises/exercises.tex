@@ -81,10 +81,12 @@ with $\theta^\star$.
 \end{exercise}
 
 % ===========================================================================
-\begin{exercise}{Section 4.2}{Tutte's layout is a random walk}
+\begin{exercise}{Section 4.2}{The anchored layout is a random walk}
 Let $\mathcal A\neq\emptyset$ be the anchors and $\mathcal F$ the free nodes of
 a connected graph, and let $H=-L_{\mathcal{FF}}^{-1}L_{\mathcal{FA}}$, so that
-Tutte's layout is $P_{\mathcal F}=HP_{\mathcal A}$.
+the anchored layout of Section 4.2 is $P_{\mathcal F}=HP_{\mathcal A}$ (for any
+anchors; it is Tutte's embedding when $G$ is planar and $3$-connected and the
+anchors are the outer face placed on a convex polygon).
 \begin{enumerate}[(a)]
 \item Show that $H$ is entrywise nonnegative and that its rows sum to one.
 (Hint: write $L_{\mathcal{FF}}=D_{\mathcal F}(I-D_{\mathcal F}^{-1}A_{\mathcal{FF}})$ and
@@ -124,10 +126,15 @@ $\bm x^\top D\bm 1=0$, $\bm x^\top D\bm x=\vol(V)$,
 $\bm x^\top L\bm x/\bm x^\top D\bm x=\Ncut(A,\bar A)$.
 \item \textsf{[code]} Compute the normalized cut of the dimer partition, of the
 $\alpha$/$\beta$ partition (A, C versus B, D) and of the partition obtained by
-thresholding the second eigenvector of $L\bm q=\mu D\bm q$ at zero. Which is
+thresholding the second eigenvector of $L\bm v=\mu D\bm v$ at zero. Which is
 the smallest?
-\item Check Cheeger's inequality on these numbers. What does (b) say about the
-quality of the spectral relaxation?
+\item Cheeger's inequality bounds the conductance
+$h_G=\min_S\cut(S,\bar S)/\min\{\vol(S),\vol(\bar S)\}$ of the \emph{best}
+cut, $\mu_2/2\le h_G\le\sqrt{2\mu_2}$, with $\mu_2$ the second eigenvalue of
+$L\bm v=\mu D\bm v$. Compute the conductance of the three cuts of~(b) and
+position them with respect to this bracket; then sweep a threshold through the
+second eigenvector and report the best sweep cut. What do (b) and the value of
+$\mu_2$ say about the quality of the spectral relaxation?
 \end{enumerate}
 \end{exercise}
 
@@ -139,8 +146,9 @@ $6, 6.5, \dots, 10$~\AA\ (the function \texttt{contact\_network} in
 \begin{enumerate}[(a)]
 \item For which cut-offs does the graph have isolated residues? What does that
 do to $L_{\mathrm{norm}}$ and to Theorem 2.2(ii)?
-\item For the others, record $k^\star$ and the relative margin between the
-largest and the second largest gap.
+\item For the others, record $k^\star$ over the same prespecified coarse range
+$k=2,\dots,9$ as in the paper, and the relative margin between the largest and
+the second largest gap in that range.
 \item Fix $k=4$ and record the agreement with the chains. Which is more robust,
 the choice of $k$ or the partition for a given $k$?
 \end{enumerate}
@@ -153,8 +161,11 @@ $\ln S^{(e)}_{ij}=r_i-r_j+\eta^{(e)}_h$, with independent
 $\eta^{(e)}_h\sim\mathcal N(0,\sigma^2)$, and $b_h$ is the mean of the $m_h$
 log-judgements.
 \begin{enumerate}[(a)]
-\item Show that the maximum-likelihood estimator of $\bm r$ is
-Problem 1 with $W=\diag(m_1,\dots,m_m)$.
+\item Show that the maximum-likelihood estimate of $\bm r$ solves
+Problem 1 with the weight matrix
+\[
+W=\diag(m_1,\dots,m_m).
+\]
 \item Write the distributed iteration that agent $i$ runs, and an admissible
 step size.
 \item \textsf{[code]} On the small world of Section 6, with $m_h$ uniform in

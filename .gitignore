@@ -8,6 +8,8 @@
 *.blg
 *.bbl
 *.toc
+# figures.pdf is a build product (exercises.pdf, in contrast, is committed)
+figures/figures.pdf
 # Python and Jupyter
 __pycache__/
 *.pyc

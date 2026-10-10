@@ -7,8 +7,11 @@
   "ahp_lambda_n": 8.263088349299968,
   "ahp_m": 80,
   "ahp_n": 40,
+  "ahp_settling_time_1e3": 13.228061728184061,
   "ahp_spectral_ratio": 15.823467730907318,
   "anchor_count": 10,
+  "beta_absorbed_by_alpha": 18,
+  "beta_absorbed_touching_alpha": 16,
   "chain_agreement": 0.9512195121951219,
   "chain_misassigned": 28,
   "chain_sizes": [
@@ -73,6 +76,33 @@
   "consensus_m": 160,
   "consensus_n": 50,
   "consensus_spectral_ratio": 76.79052047479249,
+  "cutoff_scan": {
+    "7": {
+      "contacts": 1726,
+      "k_star": 4,
+      "margin": 0.17136665701429343
+    },
+    "7.5": {
+      "contacts": 1978,
+      "k_star": 4,
+      "margin": 0.17054542892683255
+    },
+    "8": {
+      "contacts": 2251,
+      "k_star": 4,
+      "margin": 0.06633103334062884
+    },
+    "8.5": {
+      "contacts": 2643,
+      "k_star": 6,
+      "margin": 0.04032898567880572
+    },
+    "9": {
+      "contacts": 3310,
+      "k_star": 4,
+      "margin": 0.10262285005486005
+    }
+  },
   "discrete_rate_theta_deg": 0.9849528053395078,
   "drawing_connectivity": 3,
   "drawing_d_max": 8,
@@ -88,13 +118,19 @@
   "drawing_spectral_ratio": 14.602317696891033,
   "eigengap_k_star": 4,
   "eigengap_largest": 0.012833837499141021,
+  "eigengap_runner_up_ratio": 0.9336689666592343,
   "grounded_lambda_min": 0.8404275598882344,
   "hall_crossings": 4,
   "hall_energy": 0.6513882128981532,
+  "iters_1e3_theta_deg": 456,
+  "iters_1e3_theta_star": 266,
+  "koren_crossings": 10,
   "koren_mu_2": 0.13777391387474955,
   "ncut_k_star": 0.2701865303824291,
+  "rho_theta_star": 0.9742899264872757,
   "settling_time_1e3": 38.25605278835966,
   "slls_iters_to_1e6": 152,
+  "slls_one_minus_theta_lambda_n": 0.37718139154999464,
   "slls_rate": 0.9129658924977612,
   "slls_runs_per_sigma": 300,
   "slls_sigma_shown": 0.3,
@@ -105,7 +141,8 @@
   "slls_theta": 0.16666666666666666,
   "theta_degree_bound": 0.08333333333333333,
   "theta_spectral_bound": 0.14423996193504127,
+  "theta_star": 0.14238575192263,
   "tutte_crossings": 0,
-  "tutte_max_displacement": 0.2422641691187165,
+  "tutte_max_displacement": 0.25537778239997405,
   "x_ave": -0.04759124421161699
 }

@@ -3,8 +3,8 @@
 Downloads the crystal structure of human deoxyhaemoglobin (PDB 2HHB) from
 RCSB and writes the C-alpha contact network to assets/, following the standard
 protein-contact-network convention of Di Paola et al. (Chem. Rev. 2013): two
-residues are in contact when their C-alpha atoms lie between 4 and 8 angstrom
-apart.
+residues are in contact when the separation between their C-alpha atoms is
+between 4 and 8 angstroms.
 
 The derived files are committed to the repository, so this script only needs to
 be run if you want to rebuild them or change the cut-off; the figures never

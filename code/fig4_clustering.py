@@ -1,13 +1,13 @@
 """Figure 4: spectral clustering of the haemoglobin contact network.
 
-Human deoxyhaemoglobin is a tetramer, so the ground truth is known: the four
-chains A, C (alpha) and B, D (beta). Neither the number of clusters nor the
-assignment is given to the algorithm.
+Human deoxyhaemoglobin is a tetramer, so an external reference partition is
+available: the four chains A, C (alpha) and B, D (beta). The assignment is not
+given to the algorithm. The number of clusters is not supplied directly: the
+eigengap rule selects it within the prespecified range 2, ..., 9.
 """
-import itertools
-
 import numpy as np
-from scipy.linalg import eigh
+from scipy.optimize import linear_sum_assignment
+from scipy.spatial.distance import pdist, squareform
 
 from common import (SEED, graph_clustering, normalize_layout, spectra,
                     update_results, write_csv, write_table)
@@ -38,15 +38,51 @@ def ncut(labels, A, d):
 
 
 def best_match(lab, truth, k):
-    """Agreement with the ground truth, maximized over cluster relabelings."""
+    """Agreement with the ground truth, maximized over one-to-one matchings of
+    the true classes with the k clusters.
+
+    The optimal matching is found by the Hungarian algorithm on the confusion
+    matrix (O(k^3), valid for any k) instead of enumerating the k! permutations.
+    Returns (accuracy, {class: cluster}); when k is smaller than the number of
+    classes some classes stay unmatched and are absent from the mapping, when it
+    is larger some clusters stay unmatched.
+    """
     names = sorted(set(truth.tolist()))
-    best, perm_best = 0.0, None
-    for perm in itertools.permutations(range(k)):
-        m = {names[i]: perm[i] for i in range(len(names))}
-        acc = float(np.mean([lab[i] == m[truth[i]] for i in range(len(lab))]))
-        if acc > best:
-            best, perm_best = acc, m
-    return best, perm_best
+    conf = np.array([[np.sum((truth == c) & (lab == q)) for q in range(k)]
+                     for c in names])
+    rows, cols = linear_sum_assignment(conf, maximize=True)
+    mapping = {names[r]: int(c) for r, c in zip(rows, cols)}
+    return float(conf[rows, cols].sum() / len(lab)), mapping
+
+
+def eigengap(lam_n, kmax=9):
+    """Eigengap rule (24) on k=2,...,kmax.
+
+    Returns (k*, largest gap, runner-up gap / largest gap).  The upper limit is
+    a prespecified scale choice; the paper uses kmax=9 for coarse partitions.
+    """
+    g = np.diff(lam_n)[1:kmax]                      # gaps after k = 2, ..., kmax
+    top = np.sort(g)[::-1]
+    return int(np.argmax(g) + 2), float(top[0]), float(top[1] / top[0])
+
+
+def cutoff_scan(xyz, cutoffs, lower=4.0):
+    """k* and margin of the eigengap rule when the contact cut-off changes
+    (the robustness statement of Section 5.4)."""
+    D = squareform(pdist(xyz))
+    out = {}
+    for c in cutoffs:
+        Ac = ((D >= lower) & (D <= c)).astype(float)
+        np.fill_diagonal(Ac, 0.0)
+        dc = Ac.sum(1)
+        if dc.min() == 0:
+            out[f"{c:g}"] = {"isolated_residues": int((dc == 0).sum())}
+            continue
+        Ln = Ac * 0.0 - Ac / np.sqrt(np.outer(dc, dc)) + np.eye(len(dc))
+        k, _, ratio = eigengap(np.linalg.eigvalsh(Ln))
+        out[f"{c:g}"] = {"contacts": int(Ac.sum() / 2), "k_star": k,
+                         "margin": float(1 - ratio)}
+    return out
 
 
 def pca2(X):
@@ -65,13 +101,20 @@ def main():
     write_table("spectrum_normalized.csv", ["i", "lambda"],
                 np.column_stack([np.arange(1, 11), lam_n[:10]]))
 
-    U = Q_n[:, 1:k_star]
+    # Ng--Jordan--Weiss symmetric normalized spectral clustering uses the
+    # first k eigenvectors of L_norm, including the trivial first one.
+    U = Q_n[:, :k_star]
     U = U / np.maximum(np.linalg.norm(U, axis=1, keepdims=True), 1e-12)
     lab, _ = kmeans(U, k_star, rng)
     acc, mapping = best_match(lab, chain, k_star)
-    # relabel clusters so that cluster q corresponds to the q-th chain
-    inv = {v: k for k, v in mapping.items()}
-    order = {q: sorted(set(chain.tolist())).index(inv[q]) for q in range(k_star)}
+    # Stable display labels: matched clusters come first in chain order and any
+    # unmatched clusters follow.  Enumerating that order keeps the labels
+    # contiguous also when k* is smaller than the number of reference chains.
+    names = sorted(set(chain.tolist()))
+    cluster_order = [q for c, q in sorted(mapping.items(),
+                                          key=lambda item: names.index(item[0]))]
+    cluster_order += [q for q in range(k_star) if q not in cluster_order]
+    order = {q: new for new, q in enumerate(cluster_order)}
     lab = np.array([order[q] for q in lab])
 
     P_emb = normalize_layout(np.column_stack([Q_n[:, 1] / np.sqrt(d),
@@ -87,7 +130,20 @@ def main():
 
     conf = [[int(((chain == c) & (lab == q)).sum()) for q in range(k_star)]
             for c in sorted(set(chain.tolist()))]
+    # the 18 of the 28 disagreements of Section 5.4: beta residues absorbed by the
+    # alpha cluster of the same dimer, and how many touch that alpha chain
+    partner = {"B": "A", "D": "C"}
+    names = sorted(set(chain.tolist()))
+    absorbed = [i for i in range(n) if chain[i] in partner
+                and lab[i] == names.index(partner[chain[i]])]
+    touching = [i for i in absorbed
+                if any(chain[j] == partner[chain[i]] for j in np.flatnonzero(A[i]))]
+    _, _, runner_up = eigengap(lam_n)
     update_results({
+        "eigengap_runner_up_ratio": runner_up,
+        "beta_absorbed_by_alpha": len(absorbed),
+        "beta_absorbed_touching_alpha": len(touching),
+        "cutoff_scan": cutoff_scan(xyz, [7.0, 7.5, 8.0, 8.5, 9.0]),
         "eigengap_k_star": k_star,
         "eigengap_largest": float(gaps[k_star - 1]),
         "chain_agreement": acc,

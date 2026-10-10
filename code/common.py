@@ -90,9 +90,9 @@ def graph_clustering():
     """Haemoglobin protein contact network, read from assets/.
 
     Human deoxyhaemoglobin (PDB 2HHB) is a tetramer of four chains, A and C
-    (alpha) and B and D (beta). Two residues are in contact when their C-alpha
-    atoms are 4 to 8 angstrom apart, the convention of Di Paola et al. Rebuild
-    the files with `python3 code/fetch_hemoglobin.py`.
+    (alpha) and B and D (beta). Two residues are in contact when the separation
+    between their C-alpha atoms is between 4 and 8 angstroms, the convention of
+    Di Paola et al. Rebuild the files with `python3 code/fetch_hemoglobin.py`.
     """
     nodes = os.path.join(ASSETS, "hemoglobin_nodes.csv")
     edges = os.path.join(ASSETS, "hemoglobin_edges.csv")
@@ -136,15 +136,31 @@ def incidence(G):
     return B, edges
 
 
+def fix_signs(V, tol=1e-8):
+    """Orient every column of V so that its last non-negligible entry is positive.
+
+    Eigenvectors are defined up to a sign, and different LAPACK drivers and
+    versions return different ones; without a convention the layouts and the
+    embedding of the figures could come out mirrored on another machine.
+    """
+    V = np.array(V, dtype=float)
+    for j in range(V.shape[1]):
+        i = np.flatnonzero(np.abs(V[:, j]) > tol)[-1]
+        if V[i, j] < 0:
+            V[:, j] = -V[:, j]
+    return V
+
+
 def spectra(L, d):
-    """Eigendecompositions of L and of the normalized Laplacian."""
+    """Eigendecompositions of L and of the normalized Laplacian (columns with a
+    fixed sign convention, see fix_signs)."""
     lam, Q = eigh(L)
     lam[0] = max(lam[0], 0.0)
     Dm12 = np.diag(1.0 / np.sqrt(d))
     Lnorm = Dm12 @ L @ Dm12
     lam_n, Q_n = eigh(Lnorm)
     lam_n[0] = max(lam_n[0], 0.0)
-    return lam, Q, Lnorm, lam_n, Q_n
+    return lam, fix_signs(Q), Lnorm, lam_n, fix_signs(Q_n)
 
 
 # ----------------------------------------------------------------------
@@ -184,10 +200,9 @@ def normalize_layout(P, per_axis=False):
 
     With per_axis=False the aspect ratio is preserved (used for the true
     positions and for the anchored layout, whose anchors keep their true
-    positions). With per_axis=True each coordinate
-    is scaled independently, which is standard practice for spectral layouts:
-    the eigenvectors have very different norms once weighted by 1/sqrt(lambda),
-    and an unscaled plot degenerates into a thin sliver.
+    positions). With per_axis=True each coordinate is scaled independently for
+    display, so both spectral coordinates remain legible. This visual rescaling
+    preserves crossings but not the normalization of the optimization problem.
     """
     P = np.asarray(P, dtype=float)
     P = P - P.mean(0)

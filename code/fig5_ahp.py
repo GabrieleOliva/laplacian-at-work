@@ -91,6 +91,8 @@ def main():
         "slls_tau_sigma05": curve[5][1],
         "slls_tau_sigma1": curve[-1][1],
         "slls_iters_to_1e6": int(np.ceil(np.log(1e-6) / np.log(rho))),
+        "ahp_settling_time_1e3": float(np.log(1e3) / lam[1]),
+        "slls_one_minus_theta_lambda_n": float(abs(1 - theta * lam[-1])),
     })
 
 

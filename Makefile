@@ -2,13 +2,18 @@
 PY ?= python3
 JUPYTER ?= jupyter
 
-.PHONY: all data exercises notebooks clean
+.PHONY: all data figures exercises notebooks clean
 
 all: data exercises
 
 # regenerate every CSV file and data/results.json
 data:
 	$(PY) code/run_all.py
+
+# the five figures of the paper, drawn from data/ (needs LaTeX with pgfplots)
+figures:
+	cd figures && latexmk -pdf -interaction=nonstopmode figures.tex \
+	    && latexmk -c figures.tex
 
 # the exercise sheet (problems only)
 exercises:
@@ -25,3 +30,4 @@ notebooks:
 clean:
 	rm -rf code/__pycache__ notebooks/.ipynb_checkpoints
 	cd exercises && latexmk -c exercises.tex
+	cd figures && latexmk -c figures.tex

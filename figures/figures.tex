@@ -1,0 +1,33 @@
+% ---------------------------------------------------------------------------
+% Standalone driver: draws the five figures of the paper from ../data/*.csv.
+%     cd figures && latexmk -pdf figures.tex        (or:  make figures)
+% The paper itself (main.tex) \input's the same files; cross-references to the
+% paper are stubbed out below so that the captions compile on their own.
+% ---------------------------------------------------------------------------
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,bm}
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\newcommand{\dataroot}{../data}
+\input{pgfstyles}
+
+% numbers of the paper's sections, figures, table and equation
+\makeatletter
+\@namedef{r@sec:consensus}{{3}{}}
+\@namedef{r@sec:drawing}{{4}{}}
+\@namedef{r@sec:clustering}{{5}{}}
+\@namedef{r@sec:ahp}{{6}{}}
+\@namedef{r@tab:examples}{{1}{}}
+\@namedef{r@eq:eigengap}{{24}{}}
+\@namedef{r@eq:koren}{{19}{}}
+\makeatother
+
+\begin{document}
+\input{fig1_examples}
+\input{fig2_consensus}
+\input{fig3_drawing}
+\input{fig4_clustering}
+\input{fig5_ahp}
+\end{document}

@@ -27,7 +27,14 @@ def main():
                for k in range(len(t))[sub]], fmt="%.10e")
 
     theta_deg, theta_max = 1.0 / d.max(), 2.0 / lam[-1]
+    theta_star = 2.0 / (lam[1] + lam[-1])          # best constant step
+    rho = lambda th: max(abs(1 - th * lam[1]), abs(1 - th * lam[-1]))
+    iters = lambda th: int(np.ceil(np.log(1e3) / -np.log(rho(th))))
     update_results({
+        "theta_star": float(theta_star),
+        "rho_theta_star": float(rho(theta_star)),
+        "iters_1e3_theta_deg": iters(theta_deg),
+        "iters_1e3_theta_star": iters(theta_star),
         "x_ave": x_ave,
         "theta_degree_bound": float(theta_deg),
         "theta_spectral_bound": float(theta_max),

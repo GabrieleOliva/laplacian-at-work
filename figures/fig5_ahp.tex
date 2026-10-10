@@ -2,20 +2,19 @@
 \centering
 \begin{tikzpicture}
   \begin{groupplot}[
-      group style={group size=3 by 1, horizontal sep=11mm},
-      paper axis, width=3.2cm, height=3.4cm]
+      group style={group size=3 by 1, horizontal sep=17mm},
+      paper axis, width=3.0cm, height=3.4cm]
   \nextgroupplot[ymode=log, xlabel={iteration $k$},
                  ylabel={$\|\bm r(k)-\bm r_\infty\|$},
                  xmin=0, xmax=400, ymin=1e-8, ymax=1e3,
                  xtick={0,200,400}, ytick={1e-6,1e-3,1e0,1e3},
-                 legend style={at={(0.03,0.03)}, anchor=south west},
                  title={(a) distributed SLLS}]
-    \addplot[cblue, no marks] table[x=k, y=err, col sep=comma]
+    \addplot[color=cblue, mark=none] table[x=k, y=err, col sep=comma]
         {\dataroot/slls_convergence.csv};
-    \addlegendentry{error}
-    \addplot[cred, dashed, no marks] table[x=k, y=bound, col sep=comma]
+    \node[font=\scriptsize, cblue, anchor=west] at (axis cs:25,1e-6) {error};
+    \addplot[color=cred, dashed, mark=none] table[x=k, y=bound, col sep=comma]
         {\dataroot/slls_convergence.csv};
-    \addlegendentry{bound}
+    \node[font=\scriptsize, cred, anchor=west] at (axis cs:105,1e-3) {bound};
   \nextgroupplot[xlabel={alternatives, sorted}, ylabel={utility},
                  xmin=0, xmax=41, ymin=0, ymax=0.105,
                  xtick={0,10,20,30,40},
@@ -24,10 +23,12 @@
                                    precision=2, zerofill},
                  legend style={at={(0.97,0.97)}, anchor=north east},
                  title={(b) recovery, $\sigma=0.3$}]
-    \addplot[cblue, mark=*, mark size=0.8pt] table[x=rank, y=w_true, col sep=comma]
+    \addplot[color=cblue, mark=*, mark size=0.8pt, mark options={fill=cblue, draw=cblue}]
+        table[x=rank, y=w_true, col sep=comma]
         {\dataroot/slls_utilities.csv};
     \addlegendentry{true}
-    \addplot[corange, only marks, mark=square, mark size=1.1pt]
+    \addplot[color=corange, only marks, mark=square, mark size=1.1pt,
+        mark options={draw=corange, fill=none}]
         table[x=rank, y=w_hat, col sep=comma] {\dataroot/slls_utilities.csv};
     \addlegendentry{SLLS}
   \nextgroupplot[xlabel={perturbation level $\sigma$},
@@ -49,10 +50,9 @@
 \caption{Sparse AHP on the small-world elicitation graph of
 Figure~\ref{fig:examples}(d), solved by the Sparse Logarithmic Least Squares
 method. (a)~the distributed iteration
-converges linearly, at the rate $\rho(\theta)$
-predicted by the consensus analysis of Section~\ref{sec:consensus}; the error
-curve falls
-below the displayed range. (b)~estimated versus true utilities for a single
+converges linearly (solid), at the rate $\rho(\theta)$ predicted by the
+consensus analysis of Section~\ref{sec:consensus} (dashed bound); the error
+curve decreases below the displayed range. (b)~estimated versus true utilities for a single
 instance; (c)~Kendall's $\tau$ between the true and the estimated ranking,
 averaged over $300$ runs per value of $\sigma$ (shaded: one standard
 deviation). At $\sigma=0$ the recovery is exact.}

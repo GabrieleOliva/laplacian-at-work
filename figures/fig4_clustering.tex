@@ -21,7 +21,7 @@
     \node[font=\scriptsize, cred, anchor=north west] at (axis cs:4.5,0.030)
         {$k^\star=4$};
   \nextgroupplot[hide axis, xmin=-1.12, xmax=1.12, ymin=-1.12, ymax=1.12,
-                 enlargelimits=false, title={(b) spectral embedding}]
+                 enlargelimits=false, title={(b) projection on $\bm v_2,\bm v_3$}]
     \addplot[cluster marks tiny] table[x=x, y=y, meta=class, col sep=comma]
         {\dataroot/cluster_embedding.csv};
   \nextgroupplot[hide axis, xmin=-1.12, xmax=1.12, ymin=-1.12, ymax=1.12,
@@ -32,9 +32,10 @@
 \end{tikzpicture}
 \caption{Spectral clustering of the haemoglobin contact network of
 Figure~\ref{fig:examples}(c). (a)~the largest gap in the spectrum of
-$L_{\mathrm{norm}}$ falls after the fourth eigenvalue, so \eqref{eq:eigengap}
-returns $k^\star=4$ without being told that the molecule is a tetramer;
-(b)~the $574$ residues in the spectral embedding, with a marker per cluster;
+$L_{\mathrm{norm}}$, among the candidate gaps after $k=2,\dots,9$, occurs
+after the fourth eigenvalue, so \eqref{eq:eigengap} returns $k^\star=4$
+within the prespecified coarse-partition range;
+(b)~the $574$ residues projected on the first two nontrivial generalized eigenvectors $\bm v_2,\bm v_3$ of \eqref{eq:koren}, with a marker per cluster;
 (c)~the same clusters at the residue positions in space, projected on their
 two principal axes. Compare with Figure~\ref{fig:examples}(c), which is the
 same projection coloured by the true chain.}

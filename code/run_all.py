@@ -7,7 +7,7 @@ import fig2_consensus
 import fig3_drawing
 import fig4_clustering
 import fig5_ahp
-from common import DATA, ROOT
+from common import DATA
 
 if __name__ == "__main__":
     p = os.path.join(DATA, "results.json")

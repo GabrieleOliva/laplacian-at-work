@@ -2,7 +2,7 @@
 \centering
 \begin{tikzpicture}
   \begin{groupplot}[
-      group style={group size=2 by 1, horizontal sep=15mm},
+      group style={group size=2 by 1, horizontal sep=19mm},
       paper axis, width=5.2cm, height=4.0cm]
   \nextgroupplot[xlabel={time $t$}, ylabel={$x_i(t)$},
                  xmin=0, xmax=40, ymin=-1.05, ymax=1.05,
@@ -10,26 +10,30 @@
     \foreach \k in {1,...,50}{%
       \addplot[cblue, opacity=0.45, no marks, line width=0.4pt, forget plot]
         table[x=t, y=x\k, col sep=comma] {\dataroot/consensus_trajectories.csv};}
-    \addplot[cred, dashed, no marks, line width=0.8pt]
+    \addplot[color=cred, dashed, mark=none, line width=0.8pt]
         coordinates {(0,-0.0476) (40,-0.0476)};
-    \addlegendentry{$x_{\mathrm{ave}}$}
+    \draw[cred, thin, ->] (axis cs:24,0.38) -- (axis cs:24,-0.02);
+    \node[font=\scriptsize, cred, anchor=south] at (axis cs:24,0.38)
+        {$x_{\mathrm{ave}}$};
   \nextgroupplot[ymode=log, xlabel={time $t$},
                  ylabel={$\|\bm x(t)-x_{\mathrm{ave}}\bm 1_n\|$},
                  xmin=0, xmax=60, ymin=1e-5, ymax=20,
-                 legend pos=south west,
                  title={(b) rate of convergence}]
-    \addplot[cblue, no marks] table[x=t, y=err, col sep=comma]
+    \addplot[color=cblue, mark=none] table[x=t, y=err, col sep=comma]
         {\dataroot/consensus_error.csv};
-    \addlegendentry{disagreement}
-    \addplot[cred, dashed, no marks] table[x=t, y=bound, col sep=comma]
+    \node[font=\scriptsize, cblue, anchor=west] at (axis cs:3,3e-4) {disagreement};
+    \addplot[color=cred, dashed, mark=none] table[x=t, y=bound, col sep=comma]
         {\dataroot/consensus_error.csv};
-    \addlegendentry{$\mathrm{e}^{-\lambda_2 t}$}
+    \node[font=\scriptsize, cred, anchor=south west] at (axis cs:33,2.5e-2)
+        {$\mathrm{e}^{-\lambda_2 t}$};
   \end{groupplot}
 \end{tikzpicture}
 \caption{Average consensus on the sensor network of
 Figure~\ref{fig:examples}(a), from a random initial condition. (a)~all $50$
-states converge to $x_{\mathrm{ave}}$; (b)~the disagreement is bounded by the envelope determined
-by the algebraic connectivity $\lambda_2=0.1806$, and
-settles onto that rate once the faster modes have died out.}
+states (thin blue lines) converge to the average $x_{\mathrm{ave}}$ (dashed red);
+(b)~the disagreement (solid blue) is bounded by the envelope
+$\mathrm{e}^{-\lambda_2 t}$ (dashed red), determined by the algebraic
+connectivity $\lambda_2=0.1806$, and settles onto that rate once the faster
+modes have died out.}
 \label{fig:consensus}
 \end{figure}

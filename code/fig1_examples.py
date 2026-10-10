@@ -61,6 +61,8 @@ def main():
     res["drawing_hull_size"] = len(hull)
     res["drawing_planar"] = bool(nx.check_planarity(Gd)[0])
     res["drawing_connectivity"] = int(nx.node_connectivity(Gd))
+    assert res["drawing_planar"] and res["drawing_connectivity"] >= 3, \
+        "the Delaunay example must be planar and 3-connected (Tutte)"
     res["clustering_chains"] = sorted(set(chain.tolist()))
     update_results(res)
 
